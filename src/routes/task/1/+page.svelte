@@ -11,11 +11,10 @@
 	task1Store.subscribe((data) => (taskData = data));
 
 	let result = '';
-	$: markdownHTML = marked(result);
-
 	$: result = task(taskData);
-
-	function verify(data: TaskData): boolean {
+	$: markdownHTML = marked(result);
+	
+	function verify(data: TaskData): boolean { /*All values in this task are numbers*/
 		for (const value of Object.values(data)) {
 			if (isNaN(Number(value))) {
 				return false;
@@ -52,9 +51,9 @@
 			case "3":
 			case "4":
 			case "5":
-				return res += raid5();
+				return res += raid5(data, block_count, stripes);
 			case "6":
-				return res;
+				return res += raid6(data, block_count, stripes);
 			default:
 				return "## Invalid Raid Level";
 		}
@@ -85,11 +84,101 @@
 		let answer_seq = read_time_seq + calc_time + write_time;
 		res += `\`answer_seq\` = \`read_time_seq\` + \`calc_time\` + \`write_time\` = ${answer_seq} мкс\n\n`;
 		answer_seq = answer_seq / (10**6 * 60);
-		res += `\`answer_seq\` = ${answer_seq} мин = ${Math.round(answer_seq)} мин\n`;
+		res += `**\`answer_seq\` = ${answer_seq} мин = ${Math.round(answer_seq)} мин** (более вероятный ответ)\n`;
 
 		res += `### Параллельно:\n`;
 		let answer_par = read_time_par + calc_time + write_time;
 		res += `\`answer_par\` = \`read_time_par\` + \`calc_time\` + \`write_time\` = ${answer_par} мкс\n\n`;
+		answer_par = answer_par / (10**6 * 60);
+		res += `\`answer_par\` = ${answer_par} мин = ${Math.round(answer_par)} мин\n`;
+
+		return res;
+	}
+
+	function raid5(data: TaskData, block_count: number, stripes: number) {
+		let res = `### RAID ${data.A}:\n При отказе одного диска массив может быть восстановлен, читая данные со всех остальных B-1 «живых»\n`;
+		res += `### "Живых" дисков осталось N - 1: ${Number(data.B) - 1}\n`;
+
+		res += '### Время чтения: (Если последовательно)\n';
+		const read_time_seq = block_count * Number(data.F) * (Number(data.B) - 1);
+		res += `read_time_seq = block_count * ${data.F} * ${(Number(data.B) - 1)} = ${read_time_seq} мкс\n`;
+
+		res += '### Время чтения: (Если параллельно)\n';
+		const read_time_par = stripes * Number(data.E) * Number(data.F);
+		res += `read_time_par = stripes * ${data.E} * ${data.F} = ${read_time_par} мкс\n`;
+
+		res += '### Время расчёта:\n';
+		const calc_time = stripes * Number(data.H);
+		res += `\`calc_time\` = \`stripes\` * ${data.H} = ${calc_time} мкс\n`;
+
+		res += '### Запись на заменённый диск\n';
+		const write_time = block_count * Number(data.G);
+		res += `\`write_time\` = \`block_count\` * ${data.G} = ${write_time} мкс\n`;
+
+		res += `## Итого:\n`;
+		res += `### Последовательно:\n`;
+		let answer_seq = read_time_seq + calc_time + write_time;
+		res += `\`answer_seq\` = \`read_time_seq\` + \`calc_time\` + \`write_time\` = ${answer_seq} мкс\n\n`;
+		answer_seq = answer_seq / (10**6 * 60);
+		res += `**\`answer_seq\` = ${answer_seq} мин = ${Math.round(answer_seq)} мин** (более вероятный ответ)\n`;
+
+		res += `### Параллельно:\n`;
+		let answer_par = read_time_par + calc_time + write_time;
+		res += `\`answer_par\` = \`read_time_par\` + \`calc_time\` + \`write_time\` = ${answer_par} мкс\n\n`;
+		answer_par = answer_par / (10**6 * 60);
+		res += `\`answer_par\` = ${answer_par} мин = ${Math.round(answer_par)} мин\n`;
+
+		return res;
+	}
+
+	function raid6(data: TaskData, block_count: number, stripes: number) {
+		let res = `### RAID 6:\n Используется «двойной паритет» позволяя переносить выход из строя сразу двух дисков.
+		Но при отказе одного диска массив может быть восстановлен, читая данные со всех остальных B-1 «живых»\n`;
+		res += `### "Живых" дисков осталось N - 1: ${Number(data.B) - 1}\n`;
+
+		res += '### Время чтения: (Если последовательно)\n';
+		const read_time_seq = block_count * Number(data.F) * (Number(data.B) - 1);
+		res += `read_time_seq = block_count * ${data.F} * ${(Number(data.B) - 1)} = ${read_time_seq} мкс\n`;
+
+		res += '### Время чтения: (Если параллельно)\n';
+		const read_time_par = stripes * Number(data.E) * Number(data.F);
+		res += `read_time_par = stripes * ${data.E} * ${data.F} = ${read_time_par} мкс\n`;
+
+		res += `## Важно!:\n`;
+		res += `Если трактовать буквально, что H = ${data.H}мкс это «время вычисления всего нужного кода на один stripe» **именно** для нашего уровня,
+		тогда \`calc_time\` получится:\n\n`;
+		let calc_time = stripes * Number(data.H);
+		res += `\`calc_time\` = \`stripes\` * ${data.H} = ${calc_time} мкс\n`;
+
+		res += `Иначе, двойной паритет требует двойного вычисления:\n\n`;
+		res += `\`calc_time\` = \`stripes\` * 2 * ${data.H} = ${calc_time * 2} мкс\n`;
+
+		res += '### Запись на заменённый диск\n';
+		const write_time = block_count * Number(data.G);
+		res += `\`write_time\` = \`block_count\` * ${data.G} = ${write_time} мкс\n`;
+
+		res += `## Итого:\n`;
+		res += `### Последовательно (одно вычисление):\n`;
+		let answer_seq = read_time_seq + calc_time + write_time;
+		res += `\`answer_seq\` = \`read_time_seq\` + \`calc_time\` + \`write_time\` = ${answer_seq} мкс\n\n`;
+		answer_seq = answer_seq / (10**6 * 60);
+		res += `**\`answer_seq\` = ${answer_seq} мин = ${Math.round(answer_seq)} мин** (более вероятный ответ)\n`;
+
+		res += `### Последовательно (двойное вычисление):\n`;
+		answer_seq = read_time_seq + (calc_time * 2) + write_time;
+		res += `\`answer_seq\` = \`read_time_seq\` + 2 * \`calc_time\` + \`write_time\` = ${answer_seq} мкс\n\n`;
+		answer_seq = answer_seq / (10**6 * 60);
+		res += `\`answer_seq\` = ${answer_seq} мин = ${Math.round(answer_seq)} мин\n`;
+
+		res += `### Параллельно (одно вычисление):\n`;
+		let answer_par = read_time_par + calc_time + write_time;
+		res += `\`answer_par\` = \`read_time_par\` + \`calc_time\` + \`write_time\` = ${answer_par} мкс\n\n`;
+		answer_par = answer_par / (10**6 * 60);
+		res += `\`answer_par\` = ${answer_par} мин = ${Math.round(answer_par)} мин\n`;
+
+		res += `### Параллельно (двойное вычисление):\n`;
+		answer_par = read_time_par + (calc_time * 2) + write_time;
+		res += `\`answer_par\` = \`read_time_par\` + 2 * \`calc_time\` + \`write_time\` = ${answer_par} мкс\n\n`;
 		answer_par = answer_par / (10**6 * 60);
 		res += `\`answer_par\` = ${answer_par} мин = ${Math.round(answer_par)} мин\n`;
 
