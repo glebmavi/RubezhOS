@@ -6,3 +6,11 @@
     <Header/>
     <slot/>
 </div>
+
+<style>
+    :global(.main-block) {
+        width: 100%;
+		max-width: 600px;
+		display: flex;
+    }
+</style>
