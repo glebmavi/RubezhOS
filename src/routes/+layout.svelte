@@ -11,7 +11,8 @@
         margin: 0;
         padding: 0;
         min-height: 100%;
-        font-family: sans-serif;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.2;
     }
 
     :global(.layout) {
