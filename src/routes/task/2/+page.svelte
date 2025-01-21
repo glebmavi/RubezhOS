@@ -103,7 +103,7 @@
 		let usedDoubly = Math.min(leftover, doublyCapacity);
 		usedFileBlocks += usedDoubly;
 		leftover -= usedDoubly;
-		res += `Использовано указателей первого уровня = ${usedDoubly}\n\n`;
+		res += `Использовано указателей второго уровня = ${usedDoubly}\n\n`;
 		res += `Осталось распределить = ${leftover} blocks\n\n`;
 
 		// Теперь нужно учесть число блоков первого уровня, которые задействованы во втором уровне.
@@ -132,43 +132,63 @@
 		serviceBlocks += 1; // сам блок 'triple level'
 
 		const triplyCapacity = pointersPerBlock ** 3;
-		let usedTriply = Math.min(leftover, triplyCapacity);
-		usedFileBlocks += usedTriply;
-		leftover -= usedTriply;
-
-		// Сколько блоков второго уровня понадобилось?
-		let fullDoublyBlocks = Math.floor(usedTriply / (pointersPerBlock ** 2));
-		let partialForDoubly = usedTriply % (pointersPerBlock ** 2);
-
-		// Число «полных» doubly-блоков
-		serviceBlocks += fullDoublyBlocks; //служебные double level блоки
-
-		// Для каждого «полного» doubly-блока (который вмещает pointersPerBlock^2 блоков данных)
-		// мы добавляем ещё blocks первого уровня (singly).
-		// Т.к. в полном doubly-блоке используется pointersPerBlock указателей на singly.
-		serviceBlocks += fullDoublyBlocks * pointersPerBlock;
-
-		// Теперь обрабатываем «частично занятый» doubly-блок (если partialForDoubly > 0):
-		if (partialForDoubly > 0) {
-			// Нам нужен ещё один doubly-блок (неполный)
-			serviceBlocks += 1; 
-			// Внутри этого неполного doubly-блока может быть несколько singly-блоков
-			// Аналогично тому, как мы считали выше:
-			let usedInPartialDoubly = partialForDoubly;
-			let singlyBlocksInPartial = Math.floor(usedInPartialDoubly / pointersPerBlock);
-			if (usedInPartialDoubly % pointersPerBlock !== 0) {
-			singlyBlocksInPartial += 1;
-			}
-			serviceBlocks += singlyBlocksInPartial;
+		
+		res += `\`triplyCapacity\` = ${pointersPerBlock}^3 = ${triplyCapacity}\n\n`;
+		// Если (теоретически) leftover > triplyCapacity, то файл слишком большой
+		// для классической трёхуровневой схемы. Но в задаче предполагаем, что влезет.
+		if (leftover > triplyCapacity) {
+			res += `### Осталось ${leftover} блоков, но 3-х уровней недостаточно (макс. ${triplyCapacity}).\n`;
+			res += `Файл слишком большой для данной FS.\n`;
+			const ans = usedFileBlocks + serviceBlocks;
+			res += `## Ответ (неполный): ${ans}`;
+			return res;
 		}
 
-		// Если после трёхуровневой индирекции всё ещё leftover > 0, 
-		// то в классической схеме (где только до triple-indirect) 
-		// хранить уже некуда. Но в рамках учебной задачи можно считать,
-		// что файл влезает (или расширять схему дальше).
-		// Здесь завершаем.
+		// Сколько блоков второго уровня понадобилось?
+		let fullSecondPointers = Math.floor(leftover / (pointersPerBlock ** 2));
+		res += `Полных указателей второго уровня: \`usedTriply\` / \`pointersPerBlock\` ^ 2 = ${leftover} / ${pointersPerBlock} ^ 2 = ${fullSecondPointers} (округлено в меньшую сторону)\n\n`;
 
-		const ans = usedFileBlocks + serviceBlocks;
+		let usedTriply = fullSecondPointers * (pointersPerBlock ** 2);
+		res += `Использовано указателей третьего уровня = ${fullSecondPointers} * ${pointersPerBlock} ^ 2 = ${usedTriply}\n\n`;
+		usedFileBlocks += usedTriply;
+		leftover -= usedTriply;
+		res += `Осталось распределить = ${leftover} blocks\n\n`;
+
+		// За каждый «полный» блок второго уровня нужно: +1 doubly-блок + pointersPerBlock singly-блоков
+		// Но прежде всего: сколько «второуровневых» блоков?
+		serviceBlocks += fullSecondPointers; // блоки второго уровня
+		serviceBlocks += fullSecondPointers * pointersPerBlock; // вложенные singly-блоки
+		res += `Добавили служебных блоков:\n`;
+		res += `${serviceBlocks - 1 - fullSecondPointers - (fullSecondPointers * pointersPerBlock)} (было) + 1 (первого уровня) + ${fullSecondPointers} (второго уровня) + ${fullSecondPointers} * ${pointersPerBlock} (третьего уровня)\n`;
+		res += `Итого \`serviceBlocks\` = ${serviceBlocks}\n\n`;
+
+		// Проверяем, остались ли ещё не распределённые блоки
+		if (leftover <= 0) {
+			// Всё уместилось
+			const ans = usedFileBlocks + serviceBlocks;
+			res += `### Все данные уже распределены\n`;
+			res += `## Ответ: ${ans}`;
+			return res;
+		}
+
+		// Иначе остался «частично занятый» блок второго уровня
+		res += `Осталось распределить = ${leftover} blocks < ${pointersPerBlock}^2 = ${pointersPerBlock ** 2}\n`;
+		const singlyNeeded = Math.ceil(leftover / pointersPerBlock);
+		res += `=> заводим ещё указатели: ${leftover} / ${pointersPerBlock} = ${leftover / pointersPerBlock} = ${singlyNeeded}\n\n`;
+		
+		const usedInPartialDoubly = singlyNeeded * pointersPerBlock;
+		usedFileBlocks += usedInPartialDoubly;
+		leftover -= usedInPartialDoubly;
+
+		// Добавляем служебные блоки уровня singly
+		serviceBlocks += singlyNeeded;
+		res += `Нужно ${singlyNeeded} блок(ов) первого уровня => \`serviceBlocks\` = ${serviceBlocks}\n\n`;
+		res += `Распределено ещё ${usedInPartialDoubly + leftover} блок(ов) данных\n\n`;
+		res += `Осталось распределить = ${leftover} blocks\n`;
+		if (leftover < 0) res += `Всё распределено.\n\n`;
+
+		const ans = (usedFileBlocks + leftover) + serviceBlocks;
+		res += `Блоки на файл + служебные = ${(usedFileBlocks + leftover)} + ${serviceBlocks} = ${ans}\n\n`
 		res += `## Ответ: ${ans}`;
 		return res;
 	}
