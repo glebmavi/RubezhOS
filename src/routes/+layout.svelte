@@ -1,5 +1,13 @@
 <script lang="ts">
-</script>
+    export let title = "Рубежка ОС 2024-2025";
+    export let description = "Решение задач рубежки по Операционным Системам";
+  </script>
+
+<svelte:head>
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</svelte:head>
 
 <!-- Layout wrapper -->
 <div class="layout">

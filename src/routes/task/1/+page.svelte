@@ -60,130 +60,106 @@
 		}
 	}
 
-	function raid1(data: TaskData, block_count: number, stripes: number) {
-		let res = '### RAID 1: вычисления паритета не нужно\n';
-		res += `### "Живых" дисков осталось N - 1: ${Number(data.B) - 1}\n`;
+	function raid1(data: TaskData, blockCount: number, stripes: number): string {
+		const readTimeSeq = blockCount * Number(data.F) * (Number(data.B) - 1);
+		const readTimePar = stripes * Number(data.E) * Number(data.F);
+		const writeTime = blockCount * Number(data.G);
+		const totalSeq = readTimeSeq + writeTime;
+		const totalPar = readTimePar + writeTime;
 
-		res += '### Время чтения: (Если последовательно)\n';
-		const read_time_seq = block_count * Number(data.F) * (Number(data.B) - 1);
-		res += `read_time_seq = block_count * ${data.F} * ${(Number(data.B) - 1)} = ${read_time_seq} мкс\n`;
+		return `
+### RAID 1: вычисления паритета не нужно
+"Живых" дисков осталось N - 1: ${Number(data.B) - 1}
 
-		res += '### Время чтения: (Если параллельно)\n';
-		const read_time_par = stripes * Number(data.E) * Number(data.F);
-		res += `read_time_par = stripes * ${data.E} * ${data.F} = ${read_time_par} мкс\n`;
+### Время чтения:
+Последовательно: ${readTimeSeq} мкс
 
-		res += '### Время расчёта:\n';
-		const calc_time = 0;
-		res += `\`calc_time\` = 0 мкс, так как RAID 1 - зеркалирование\n`;
+Параллельно: ${readTimePar} мкс
 
-		res += '### Запись на заменённый диск\n';
-		const write_time = block_count * Number(data.G);
-		res += `\`write_time\` = \`block_count\` * ${data.G} = ${write_time} мкс\n`;
+### Время записи:
+${writeTime} мкс
 
-		res += `## Итого:\n`;
-		res += `### Последовательно:\n`;
-		let answer_seq = read_time_seq + calc_time + write_time;
-		res += `\`answer_seq\` = \`read_time_seq\` + \`calc_time\` + \`write_time\` = ${answer_seq} мкс\n\n`;
-		answer_seq = answer_seq / (10**6 * 60);
-		res += `**\`answer_seq\` = ${answer_seq} мин = ${Math.round(answer_seq)} мин** (более вероятный ответ)\n`;
+## Итог:
+**Последовательно: ${totalSeq} мкс (${(totalSeq / 10 ** 6 / 60).toFixed(2)} мин)** (более вероятный ответ)
 
-		res += `### Параллельно:\n`;
-		let answer_par = read_time_par + calc_time + write_time;
-		res += `\`answer_par\` = \`read_time_par\` + \`calc_time\` + \`write_time\` = ${answer_par} мкс\n\n`;
-		answer_par = answer_par / (10**6 * 60);
-		res += `\`answer_par\` = ${answer_par} мин = ${Math.round(answer_par)} мин\n`;
-
-		return res;
+Параллельно: ${totalPar} мкс (${(totalPar / 10 ** 6 / 60).toFixed(2)} мин)
+`;
 	}
 
-	function raid5(data: TaskData, block_count: number, stripes: number) {
-		let res = `### RAID ${data.A}:\n При отказе одного диска массив может быть восстановлен, читая данные со всех остальных B-1 «живых»\n`;
-		res += `### "Живых" дисков осталось N - 1: ${Number(data.B) - 1}\n`;
+	function raid5(data: TaskData, blockCount: number, stripes: number): string {
+		const readTimeSeq = blockCount * Number(data.F) * (Number(data.B) - 1);
+		const readTimePar = stripes * Number(data.E) * Number(data.F);
+		const calcTime = stripes * Number(data.H);
+		const writeTime = blockCount * Number(data.G);
+		const totalSeq = readTimeSeq + calcTime + writeTime;
+		const totalPar = readTimePar + calcTime + writeTime;
 
-		res += '### Время чтения: (Если последовательно)\n';
-		const read_time_seq = block_count * Number(data.F) * (Number(data.B) - 1);
-		res += `read_time_seq = block_count * ${data.F} * ${(Number(data.B) - 1)} = ${read_time_seq} мкс\n`;
+		return `
+### RAID 5:
+При отказе одного диска массив может быть восстановлен, читая данные со всех остальных B-1 «живых»
 
-		res += '### Время чтения: (Если параллельно)\n';
-		const read_time_par = stripes * Number(data.E) * Number(data.F);
-		res += `read_time_par = stripes * ${data.E} * ${data.F} = ${read_time_par} мкс\n`;
+"Живых" дисков осталось N - 1: ${Number(data.B) - 1}
 
-		res += '### Время расчёта:\n';
-		const calc_time = stripes * Number(data.H);
-		res += `\`calc_time\` = \`stripes\` * ${data.H} = ${calc_time} мкс\n`;
+### Время чтения:
+Последовательно: ${readTimeSeq} мкс
 
-		res += '### Запись на заменённый диск\n';
-		const write_time = block_count * Number(data.G);
-		res += `\`write_time\` = \`block_count\` * ${data.G} = ${write_time} мкс\n`;
+Параллельно: ${readTimePar} мкс
 
-		res += `## Итого:\n`;
-		res += `### Последовательно:\n`;
-		let answer_seq = read_time_seq + calc_time + write_time;
-		res += `\`answer_seq\` = \`read_time_seq\` + \`calc_time\` + \`write_time\` = ${answer_seq} мкс\n\n`;
-		answer_seq = answer_seq / (10**6 * 60);
-		res += `**\`answer_seq\` = ${answer_seq} мин = ${Math.round(answer_seq)} мин** (более вероятный ответ)\n`;
+### Время расчёта:
+${calcTime} мкс
 
-		res += `### Параллельно:\n`;
-		let answer_par = read_time_par + calc_time + write_time;
-		res += `\`answer_par\` = \`read_time_par\` + \`calc_time\` + \`write_time\` = ${answer_par} мкс\n\n`;
-		answer_par = answer_par / (10**6 * 60);
-		res += `\`answer_par\` = ${answer_par} мин = ${Math.round(answer_par)} мин\n`;
+### Время записи:
+${writeTime} мкс
 
-		return res;
+## Итог:
+**Последовательно: ${totalSeq} мкс (${(totalSeq / 10 ** 6 / 60).toFixed(2)} мин)** (более вероятный ответ)
+
+Параллельно: ${totalPar} мкс (${(totalPar / 10 ** 6 / 60).toFixed(2)} мин)
+`;
 	}
 
-	function raid6(data: TaskData, block_count: number, stripes: number) {
-		let res = `### RAID 6:\n Используется «двойной паритет» позволяя переносить выход из строя сразу двух дисков.
-		Но при отказе одного диска массив может быть восстановлен, читая данные со всех остальных B-1 «живых»\n`;
-		res += `### "Живых" дисков осталось N - 2: ${Number(data.B) - 2}\n`;
+	function raid6(data: TaskData, blockCount: number, stripes: number): string {
+		const readTimeSeq = blockCount * Number(data.F) * (Number(data.B) - 2);
+		const readTimePar = stripes * Number(data.E) * Number(data.F);
+		const calcTime = stripes * Number(data.H);
+		const writeTime = blockCount * Number(data.G);
+		const totalSeqSingle = readTimeSeq + calcTime + writeTime;
+		const totalSeqDouble = readTimeSeq + 2 * calcTime + writeTime;
+		const totalParSingle = readTimePar + calcTime + writeTime;
+		const totalParDouble = readTimePar + 2 * calcTime + writeTime;
 
-		res += '### Время чтения: (Если последовательно)\n';
-		const read_time_seq = block_count * Number(data.F) * (Number(data.B) - 2);
-		res += `read_time_seq = block_count * ${data.F} * ${(Number(data.B) - 2)} = ${read_time_seq} мкс\n`;
+		return `
+### RAID 6:
+"Живых" дисков осталось N - 2: ${Number(data.B) - 2}
 
-		res += '### Время чтения: (Если параллельно)\n';
-		const read_time_par = stripes * Number(data.E) * Number(data.F);
-		res += `read_time_par = stripes * ${data.E} * ${data.F} = ${read_time_par} мкс\n`;
+### Время чтения:
 
-		res += `## Важно!:\n`;
-		res += `Если трактовать буквально, что H = ${data.H}мкс это «время вычисления всего нужного кода на один stripe» **именно** для нашего уровня,
-		тогда \`calc_time\` получится:\n\n`;
-		let calc_time = stripes * Number(data.H);
-		res += `\`calc_time\` = \`stripes\` * ${data.H} = ${calc_time} мкс\n`;
+Последовательно: ${readTimeSeq} мкс
 
-		res += `Иначе, двойной паритет требует двойного вычисления:\n\n`;
-		res += `\`calc_time\` = \`stripes\` * 2 * ${data.H} = ${calc_time * 2} мкс\n`;
+Параллельно: ${readTimePar} мкс
 
-		res += '### Запись на заменённый диск\n';
-		const write_time = block_count * Number(data.G);
-		res += `\`write_time\` = \`block_count\` * ${data.G} = ${write_time} мкс\n`;
+### Время расчёта:
+Если трактовать буквально, что H = ${data.H} мкс это «время вычисления всего нужного кода на один stripe» именно для нашего уровня,
+тогда \`calc_time\` получится:
 
-		res += `## Итого:\n`;
-		res += `### Последовательно (одно вычисление):\n`;
-		let answer_seq = read_time_seq + calc_time + write_time;
-		res += `\`answer_seq\` = \`read_time_seq\` + \`calc_time\` + \`write_time\` = ${answer_seq} мкс\n\n`;
-		answer_seq = answer_seq / (10**6 * 60);
-		res += `**\`answer_seq\` = ${answer_seq} мин = ${Math.round(answer_seq)} мин** (более вероятный ответ)\n`;
+Одно вычисление: ${calcTime} мкс
 
-		res += `### Последовательно (двойное вычисление):\n`;
-		answer_seq = read_time_seq + (calc_time * 2) + write_time;
-		res += `\`answer_seq\` = \`read_time_seq\` + 2 * \`calc_time\` + \`write_time\` = ${answer_seq} мкс\n\n`;
-		answer_seq = answer_seq / (10**6 * 60);
-		res += `\`answer_seq\` = ${answer_seq} мин = ${Math.round(answer_seq)} мин\n`;
+Иначе:
 
-		res += `### Параллельно (одно вычисление):\n`;
-		let answer_par = read_time_par + calc_time + write_time;
-		res += `\`answer_par\` = \`read_time_par\` + \`calc_time\` + \`write_time\` = ${answer_par} мкс\n\n`;
-		answer_par = answer_par / (10**6 * 60);
-		res += `\`answer_par\` = ${answer_par} мин = ${Math.round(answer_par)} мин\n`;
+Двойное вычисление: ${2 * calcTime} мкс
 
-		res += `### Параллельно (двойное вычисление):\n`;
-		answer_par = read_time_par + (calc_time * 2) + write_time;
-		res += `\`answer_par\` = \`read_time_par\` + 2 * \`calc_time\` + \`write_time\` = ${answer_par} мкс\n\n`;
-		answer_par = answer_par / (10**6 * 60);
-		res += `\`answer_par\` = ${answer_par} мин = ${Math.round(answer_par)} мин\n`;
+### Время записи:
+${writeTime} мкс
 
-		return res;
+## Итог:
+**Последовательно (одно вычисление): ${totalSeqSingle} мкс (${(totalSeqSingle / 10 ** 6 / 60).toFixed(2)} мин)** (более вероятный ответ)
+
+Последовательно (двойное вычисление): ${totalSeqDouble} мкс (${(totalSeqDouble / 10 ** 6 / 60).toFixed(2)} мин)
+
+Параллельно (одно вычисление): ${totalParSingle} мкс (${(totalParSingle / 10 ** 6 / 60).toFixed(2)} мин)
+
+Параллельно (двойное вычисление): ${totalParDouble} мкс (${(totalParDouble / 10 ** 6 / 60).toFixed(2)} мин)
+`;
 	}
 
 	function handleInputChange(label: string, value: string) {

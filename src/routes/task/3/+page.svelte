@@ -44,7 +44,7 @@
 		const totalTracks = Math.ceil(fileSectors / B);
 
 		// Секторов на последней дорожке
-		const lastTrackSectors = (fileSectors % B === 0) ? B : (fileSectors % B);
+		const lastTrackSectors = fileSectors % B || B;
 
 		let res = '### Решение\n';
 		res += `**1. Количество записей, помещающихся в сектор**: \n\`\`\`\n`;

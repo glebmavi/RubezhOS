@@ -180,7 +180,7 @@
 		usedFileBlocks += usedInPartialDoubly;
 		leftover -= usedInPartialDoubly;
 
-		// Добавляем служебные блоки уровня singly
+		// Добавляем служебные блоки первого уровня
 		serviceBlocks += singlyNeeded;
 		res += `Нужно ${singlyNeeded} блок(ов) первого уровня => \`serviceBlocks\` = ${serviceBlocks}\n\n`;
 		res += `Распределено ещё ${usedInPartialDoubly + leftover} блок(ов) данных\n\n`;

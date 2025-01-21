@@ -14,7 +14,6 @@
         align-items: center;
         justify-content: center;
         position: relative;
-        height: 60px;
         width: 100%;
     }
     .back-button {
@@ -29,10 +28,9 @@
         height: 24px;
     }
     .main-button {
-        background-color: white;
         padding: 8px 16px;
+        background: none;
         border: none;
-        border-radius: 4px;
         cursor: pointer;
         font-size: large;
         display: flex;
