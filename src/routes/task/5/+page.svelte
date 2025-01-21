@@ -3,13 +3,13 @@
 	import InputBlock from '$lib/components/InputBlock.svelte';
 	import OutputBlock from '$lib/components/OutputBlock.svelte';
 	import {tasks} from '$lib/tasksInfo';
-	import {task1Store, type TaskData1 as TaskData} from '$lib/stores/tasksStore';
+	import {task5Store, type TaskData5 as TaskData} from '$lib/stores/tasksStore';
 	import img from '$lib/images/photo_5.jpg'
 	import {marked} from 'marked';
 
 	const taskIdx = 4;
 	let taskData: TaskData;
-	task1Store.subscribe((data) => (taskData = data));
+	task5Store.subscribe((data) => (taskData = data));
 
 	let result = '';
 	$: result = task(taskData);
@@ -106,7 +106,7 @@ ${diff} нс
 `;
 	}
 	function handleInputChange(label: string, value: string) {
-		task1Store.update(current => ({...current, [label]: value}));
+		task5Store.update(current => ({...current, [label]: value}));
 
 	}
 </script>
