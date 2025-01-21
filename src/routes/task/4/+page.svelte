@@ -18,10 +18,10 @@
 	function task(data: TaskData) {
 		const virtualAddress = data.A;
 		const binaryVirtualAddress = parseInt(virtualAddress, 16).toString(2);
-		const binaryVirtualAddressLen = binaryVirtualAddress.length;
+		const binaryVirtualAddressLen = binaryVirtualAddress.length; //28
 
-		const pageSize = Number(data.B);
-		const offsetSize = Number(data.C);
+		const pageSize = Number(data.B); //18
+		const offsetSize = Number(data.C); //12
 
 		const offset = parseInt(
 				binaryVirtualAddress.slice(
@@ -43,6 +43,8 @@
 		const chain = data.D
 		const binaryChain = parseInt(chain, 16).toString(2);
 		const binaryChainLen = binaryChain.length;
+		console.log('binaryChain', binaryChain);
+		console.log('binaryChainLen', binaryChainLen);
 
 		const frame = parseInt(
 				binaryChain.slice(
@@ -73,21 +75,26 @@
 
 смещение = ${offset}
 
-xor всех бит номера страницы = ${xor} (${parseInt(xor, 16)} в десятичной системе)
+\`xor\` всех бит номера страницы = ${xor} (${parseInt(xor, 16)} в десятичной системе)
 
 Значит, начнем проверку записей со строчки номер ${parseInt(xor, 16)}
 
-Если значение page в строке равно ${pageNumber}, то взять значение frame и смещение
+### Циклично повторите:
 
-Иначе перейти к другой строке (см. следующую цепочку)
+Введите chain (Input D) из строки ${parseInt(xor, 16)} (${xor}).
+
+Если значение page в строке ${parseInt(xor, 16)} (${xor}) равно ${pageNumber}, то cм. ответ, иначе перейти к другой строке (см. следующую цепочку)
 
 введенная цепочка = ${chain}
 
 в двоичной системе = ${binaryChain}
 
-следующая цепочка = ${nextChain}
+**следующая цепочка = ${nextChain}**
 
-ответ = ${answer}
+Если значение page в строке ${nextChain} равно ${pageNumber}, то введите chain и cм. ответ, иначе введите chain и перейти к другой строке (см. следующую цепочку)
+
+## Ответ:
+\`frame\` + \`offset\` = ${frame} + ${offset} = **${answer}**
 		`;
 	}
 
