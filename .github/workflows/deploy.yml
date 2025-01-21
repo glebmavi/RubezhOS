@@ -27,7 +27,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
 
             # Pull the latest code
-            if [ ! -d "/home/ubuntu/RubezhOS.git" ]; then
+            if [ ! -d "/home/ubuntu/RubezhOS/.git" ]; then
               echo "Repository not found. Cloning..."
               git clone https://glebmavi:${{ secrets.GH_ACCESS_TOKEN }}@github.com/glebmavi/RubezhOS.git /home/ubuntu/RubezhOS
             else
