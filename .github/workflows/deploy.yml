@@ -32,7 +32,8 @@ jobs:
               git clone https://glebmavi:${{ secrets.GH_ACCESS_TOKEN }}@github.com/glebmavi/RubezhOS.git /home/ubuntu/RubezhOS
             else
               echo "Repository found. Pulling latest changes..."
-              git pull https://glebmavi:${{ secrets.GH_ACCESS_TOKEN }}@github.com/glebmavi/RubezhOS.git /home/ubuntu/RubezhOS
+              cd /home/ubuntu/RubezhOS
+              git pull https://glebmavi:${{ secrets.GH_ACCESS_TOKEN }}@github.com/glebmavi/RubezhOS.git
             fi
 
             cd /home/ubuntu/RubezhOS
