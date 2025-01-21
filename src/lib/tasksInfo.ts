@@ -1,31 +1,31 @@
 export const tasks = [
     {
         id: 1,
-        name: 'RAID',
+        name: 'Восстановление RAID',
         description: '',
         inputType: 'number'
     },
     {
         id: 2,
-        name: 'Unix inode fs',
+        name: 'Блоки в Unix FS',
         description: '',
         inputType: 'number'
     },
     {
         id: 3,
-        name: 'HDD geometry',
+        name: 'Жесткий диск',
         description: '',
         inputType: 'number'
     },
     {
         id: 4,
-        name: 'Inverted table',
+        name: 'Инвертированная таблица',
         description: '',
         inputType: 'text'
     },
     {
         id: 5,
-        name: 'Local cache',
+        name: 'Память NUMA',
         description: '',
         inputType: 'number'
     },

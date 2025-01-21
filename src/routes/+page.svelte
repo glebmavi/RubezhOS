@@ -2,8 +2,8 @@
     import { tasks } from "$lib/tasksInfo";
 </script>
 
-<h1>Welcome to the Task App</h1>
-<p>Select a task below:</p>
+<h1>Рубежка ОС 2024-2025</h1>
+<h3>Задания:</h3>
 
 <div class="all-tasks-container">
     {#each tasks as task}
@@ -11,9 +11,11 @@
             <a data-sveltekit-preload-code="eager" href={`/task/${task.id}`}>
                 {task.name}
             </a>
-            <p>{task.description || 'This is a placeholder description.'}</p>
+            <p>{task.description || ''}</p>
         </div>
     {/each}
+
+    <p>Всем удачи! :)</p>
 </div>
 
 <style>
@@ -26,6 +28,8 @@
         align-items: center;
     }
     a {
+        font-weight: bold;
+        font-size: large;
         cursor: pointer;
     }
 </style>
