@@ -16,15 +16,16 @@
                 on:input={(e) => onInputChange(label, (e.target as HTMLInputElement).value)}
             />
         </div>
-        {/each}
-    </div>
+    {/each}
     <slot/>
+</div>
+
 <style>
     :root {
     --gap-size: 10px;
     --label-width: 15px;
     }
-    .input-block {
+    :global(.input-block) {
     margin: 1rem 0;
     display: flex;
     flex-wrap: wrap;

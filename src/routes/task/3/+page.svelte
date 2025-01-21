@@ -4,7 +4,7 @@
 	import OutputBlock from '$lib/components/OutputBlock.svelte';
 	import { tasks } from '$lib/tasksInfo';
 	import { task3Store, type TaskData3 as TaskData} from '$lib/stores/tasksStore';
-	import img from '$lib/images/photo_3.jpg'
+	import img from '$lib/images/photo_3.jpg';
 	import { marked } from 'marked';
 
 	const taskIdx = 2;
@@ -16,21 +16,80 @@
 	$: markdownHTML = marked(result);
 
 	function task(data: TaskData) {
-		let res = '';
-		const sectorBytes = Number(data.A);
-		const trackSectors = Number(data.B);
-		const surfaceTracks = Number(data.C);
-		const surfaces = Number(data.D);
-		const fileRecords = Number(data.E);
-		const recordBytes = Number(data.F);
+		const A = Number(data.A); // байт на сектор
+		const B = Number(data.B); // секторов на дорожке
+		const C = Number(data.C); // дорожек на поверхности (не используется прямо в формулах, но хранится)
+		const D = Number(data.D); // поверхностей у диска (аналогично, хранится)
+		const E = Number(data.E); // число записей в файле
+		const F = Number(data.F); // размер одной записи, байт
+		const question = data.Question; // выбранный вопрос
 
-		const sectorRecords = Math.floor(sectorBytes / recordBytes);
-		res += `### Сколько записей влезет в 1 сектор:\n`;
-		res += `\`sectorBytes\` / \`recordBytes\` = ${sectorBytes} / ${recordBytes} = ${sectorRecords} (округляя в меньшую сторону)\n\n`;
+		// Если не все поля заполнены или вопрос не выбран – не считаем
+		if (!A || !B || !C || !D || !E || !F || !question) return '';
 
-		const fileSectors = Math.ceil(fileRecords / sectorRecords);
-		res += `### Сколько секторов придётся заполнить чтобы влез весь файл:\n`;
-		res += `\`fileRecords\` / \`sectorRecords\` = ${fileRecords} / ${sectorRecords} = ${fileSectors} (округляя в большую сторону)\n\n`;
+		// 1) Сколько записей влезет в один сектор
+		const recordsPerSector = Math.floor(A / F);
+
+		// 2) Сколько секторов понадобится для всего файла
+		const fileSectors = Math.ceil(E / recordsPerSector);
+
+		// Вспомогательные вычисления:
+		// Внутренняя фрагментация (байт)
+		const unusedBytes = fileSectors * A - E * F;
+
+		// Полный объём (байт), включая фрагментацию
+		const fullSize = fileSectors * A;
+
+		// Общее количество дорожек (каждая дорожка = B секторов)
+		const totalTracks = Math.ceil(fileSectors / B);
+
+		// Секторов на последней дорожке
+		const lastTrackSectors = (fileSectors % B === 0) ? B : (fileSectors % B);
+
+		let res = '### Решение\n';
+		res += `**1. Количество записей, помещающихся в сектор**: \n\`\`\`\n`;
+		res += `recordsPerSector = floor(${A} / ${F}) = ${recordsPerSector}\n\`\`\`\n\n`;
+		res += `**2. Общее число занятых секторов**: \n\`\`\`\n`;
+		res += `fileSectors = ceil(${E} / ${recordsPerSector}) = ${fileSectors}\n\`\`\`\n\n`;
+
+		switch (question) {
+			case 'unused-bytes':
+				res += `**Вопрос**: Какое количество байт будет неиспользованным во всех секторах (внутренняя фрагментация) для хранения всех записей?\n\n`;
+				res += `**Внутренняя фрагментация** рассчитывается по формуле:\n\n`;
+				res += `\`\`\`\nunusedBytes = fileSectors * A - E * F\n`;
+				res += `= ${fileSectors} * ${A} - ${E} * ${F}\n`;
+				res += `= ${unusedBytes} байт\n\`\`\`\n`;
+				break;
+
+			case 'full-size':
+				res += `**Вопрос**: Какое полное количество байт (включая потери фрагментации) займет файл?\n\n`;
+				res += `**Полный объем** (включая потери) = \n\`\`\`\n`;
+				res += `fullSize = fileSectors * A = ${fileSectors} * ${A} = ${fullSize} байт\n\`\`\`\n`;
+				break;
+
+			case 'total-sectors':
+				res += `**Вопрос**: Какое общее количество секторов необходимо для хранения всех записей?\n\n`;
+				res += `**Общее число секторов**: \n\`\`\`\n`;
+				res += `= ${fileSectors}\n\`\`\`\n`;
+				break;
+
+			case 'total-tracks':
+				res += `**Вопрос**: Какое общее количество дорожек необходимо для хранения всех записей?\n\n`;
+				res += `Одна дорожка содержит ${B} секторов.\n\n`;
+				res += `**Число дорожек**: \n\`\`\`\n`;
+				res += `totalTracks = ceil(fileSectors / B) = ceil(${fileSectors} / ${B}) = ${totalTracks}\n\`\`\`\n`;
+				break;
+
+			case 'last-track-sectors':
+				res += `**Вопрос**: Сколько секторов будет занято на последней дорожке файла?\n\n`;
+				res += `**Занятые сектора на последней дорожке**: \n\`\`\`\n`;
+				res += `lastTrackSectors = (fileSectors % B === 0) ? B : (fileSectors % B)\n`;
+				res += `= ${lastTrackSectors}\n\`\`\`\n`;
+				break;
+
+			default:
+				res += `Выберите вопрос из списка выше.`;
+		}
 
 		return res;
 	}
@@ -49,17 +108,30 @@
 	onInputChange={handleInputChange}
 	inputType={tasks[taskIdx].inputType}
 >
-    <div class="input-row">
+    <!-- Дополнительный select для выбора вопроса -->
+    <div class="input-block">
         <label for="select-question">Вопрос</label>
         <select 
             id="select-question" 
-            bind:value={taskData.Question} 
-            on:change={(e) => handleInputChange('Вопрос', (e.target as HTMLInputElement).value)}
+            bind:value={taskData.Question}
+            on:change={(e) => handleInputChange('Question', (e.target as HTMLSelectElement).value)}
         >
-            <option value="" disabled selected>Select an option</option>
-            <option value="Option1">Option 1</option>
-            <option value="Option2">Option 2</option>
-            <option value="Option3">Option 3</option>
+            <option value="" disabled selected>Выберите вопрос</option>
+            <option value="unused-bytes">
+				Какое количество байт будет неиспользованным во всех секторах (внутренняя фрагментация) для хранения всех записей?
+			</option>
+            <option value="full-size">
+				Какое полное количество байт (включая потери фрагментации) займет файл?
+			</option>
+            <option value="total-sectors">
+				Какое общее количество секторов необходимо для хранения всех записей?
+			</option>
+            <option value="total-tracks">
+				Какое общее количество дорожек необходимо для хранения всех записей?
+			</option>
+            <option value="last-track-sectors">
+				Сколько секторов будет занято на последней дорожке файла?
+			</option>
         </select>
     </div>
 </InputBlock>
@@ -73,5 +145,8 @@
 <style>
 	.markdown {
 		font-size: 0.9rem;
+	}
+	select {
+		width: 100%;
 	}
 </style>
