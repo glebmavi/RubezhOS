@@ -18,10 +18,10 @@
 	function task(data: TaskData) {
 		const virtualAddress = data.A;
 		const binaryVirtualAddress = parseInt(virtualAddress, 16).toString(2);
-		const binaryVirtualAddressLen = binaryVirtualAddress.length; //28
+		const binaryVirtualAddressLen = binaryVirtualAddress.length;
 
-		const pageSize = Number(data.B); //18
-		const offsetSize = Number(data.C); //12
+		const pageSize = Number(data.B);
+		const offsetSize = Number(data.C);
 
 		const offset = parseInt(
 				binaryVirtualAddress.slice(
@@ -44,7 +44,7 @@
 		let binaryChain = parseInt(chain, 16).toString(2);
 		let binaryChainLen = binaryChain.length;
 
-		binaryChain = "0".repeat(pageSize + offsetSize - binaryChainLen) + binaryChain
+		binaryChain = "0".repeat(Math.max(0,pageSize + offsetSize - binaryChainLen)) + binaryChain
 		binaryChainLen = binaryChain.length;
 
 		const frame = parseInt(
