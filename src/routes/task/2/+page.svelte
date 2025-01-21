@@ -34,7 +34,7 @@
 		const dc = Number(data.D) / Number(data.C);
 		const blocksNeeded = Math.ceil(dc);
 		const formattedDc = dc.toFixed(2);
-		res += `\`blocksNeeded\` = ${data.D} / ${data.C} = ${formattedDc} = ${blocksNeeded}(округление вверх)\n`;
+		res += `\`blocksNeeded\` = ${data.D} / ${data.C} = ${formattedDc} = ${blocksNeeded}\n`;
 
 		if (blocksNeeded === 0) {
 			res += `
@@ -48,45 +48,48 @@
 		const pointerSize = Number(data.B) / 8;
 		res += `\`pointerSize\` = ${data.B} / 8 = ${pointerSize} байт\n`;
 
-		// Сколько указателей помещается в одном блоке
+		res += `### Сколько указателей помещается в одном блоке:\n`;
 		const pointersPerBlock = Math.floor(Number(data.C) / pointerSize);
+		res += `\`pointersPerBlock\` = ${data.C} / ${pointerSize} = ${pointersPerBlock} штук\n`;
 
-		// Подсчитываем служебные блоки. Начинаем с 1 (inode).
+		res += `### Подсчитываем служебные блоки. Начинаем с 1 (первый inode)\n`;
 		let serviceBlocks = 1;
+		res += `\`serviceBlocks\` = 1\n`;
 
-		// Подсчитываем, сколько блоков данных «уже размещено»
+		// Сколько блоков данных «уже размещено»
 		let usedFileBlocks = 0;
 
-		// Оставшееся количество блоков, которые нужно выделить для файла
+		res += `### Оставшееся количество блоков, которые нужно выделить для файла:\n`
 		let leftover = blocksNeeded;
-
-		// =====================================================
-		// 2. Заполнение за счёт прямых указателей (директ)
-		// =====================================================
+		res += `Осталось распределить = ${leftover} blocks\n`;
+		
+		res += ` ## Заполнение за счёт прямых указателей (direct)\n`;
 		const usedDirect = Math.min(leftover, Number(data.A));
 		usedFileBlocks += usedDirect;
 		leftover -= usedDirect;
+		res += `Использовано прямых указателей = ${usedDirect}\n\n`;
+		res += `Осталось распределить = ${leftover} blocks\n`;
 
-		// Если всё уже разместили в прямых указателях
 		if (leftover <= 0) {
-			// Итог = все блоки данных + один блок под i-узел
+			res += `\nВсё уместилось в прямых указателях\n`;
+			res += `## Итог = все блоки данных + один блок под i-узел\n`;
 			const ans = usedFileBlocks + serviceBlocks;
+			res += `\`usedFileBlocks + serviceBlocks\` = ${usedFileBlocks} + ${serviceBlocks} = ${ans}\n`;
 			res += `## Ответ: ${ans}`;
 			return res;
 		}
 
-		// =====================================================
-		// 3. Одноуровневая индирекция (singly)
-		// =====================================================
-		// Будем использовать один блок сингли (если leftover > 0)
-		// => один служебный блок под «массив» указателей
+		res += `## Одноуровневые указатели\n`;
+		res += `+1 служебный блок под «массив» указателей\n\n`;
 		serviceBlocks += 1;
+		res += `\`serviceBlocks\` = ${serviceBlocks - 1} (пред) + 1 = ${serviceBlocks} (всего)\n\n`;
 
-		// Сколько данных (блоков) можно разместить через этот блок сингли
 		const singlyCapacity = pointersPerBlock;
 		const usedSingly = Math.min(leftover, singlyCapacity);
 		usedFileBlocks += usedSingly;
 		leftover -= usedSingly;
+		res += `Использовано указателей первого уровня = ${usedSingly}\n\n`;
+		res += `Осталось распределить = ${leftover} blocks\n`;
 
 		if (leftover <= 0) {
 			const ans = usedFileBlocks + serviceBlocks;
@@ -94,43 +97,39 @@
 			return res;
 		}
 
-		// =====================================================
-		// 4. Двухуровневая индирекция (doubly)
-		// =====================================================
-		// Для дубли:
-		// - 1 блок (указатель на блоки первого уровня);
-		// - внутри него может быть до 'pointersPerBlock' указателей на блоки первого уровня;
-		// - каждый такой блок первого уровня (singly) может содержать ещё pointersPerBlock указателей на данные.
-		serviceBlocks += 1; // сам блок doubly
+		res += `## Двухуровневые указатели\n`;
 
 		const doublyCapacity = pointersPerBlock * pointersPerBlock;
 		let usedDoubly = Math.min(leftover, doublyCapacity);
 		usedFileBlocks += usedDoubly;
 		leftover -= usedDoubly;
+		res += `Использовано указателей первого уровня = ${usedDoubly}\n\n`;
+		res += `Осталось распределить = ${leftover} blocks\n\n`;
 
-		// Теперь нужно учесть число блоков первого уровня, которые задействованы в doubly.
+		// Теперь нужно учесть число блоков первого уровня, которые задействованы во втором уровне.
 		// Для каждого "указателя" во втором уровне выделяется свой singly-блок с указателями.
 		// То есть сколько раз реально потребовался блок первого уровня?
-		// Это ceil(usedDoubly / pointersPerBlock), но реализуем аккуратно:
 		let doublyPointersUsed = Math.floor(usedDoubly / pointersPerBlock);
 		if (usedDoubly % pointersPerBlock !== 0) {
 			doublyPointersUsed += 1;
 		}
-		// Это число блоков singly, которые выделили под «даты» во втором уровне.
-		serviceBlocks += doublyPointersUsed;
 
+		// Служебные
+		serviceBlocks += 1; // сам блок 'double level'
+		// Это число блоков singly, которые выделили под данные во втором уровне.
+		serviceBlocks += doublyPointersUsed;
+		res += `Служебные: ${serviceBlocks - 1 - doublyPointersUsed} (пред) + 1 + ${doublyPointersUsed} = ${serviceBlocks} (всего)\n\n`;
+		res += `- 1 блок (указатель на блоки первого уровня)\n`;
+		res += `- внутри него может быть до \`pointersPerBlock\` ${pointersPerBlock} указателей на блоки первого уровня. В данном случае: ${doublyPointersUsed}\n\n`;
+		
 		if (leftover <= 0) {
 			const ans = usedFileBlocks + serviceBlocks;
 			res += `## Ответ: ${ans}`;
 			return res;
 		}
 
-		// =====================================================
-		// 5. Трёхуровневая индирекция (triply)
-		// =====================================================
-		// Аналогично логике выше, но теперь один «третий уровень» указывает
-		// на несколько «вторых уровней», каждый второй — на набор «первых уровней», etc.
-		serviceBlocks += 1; // сам блок triply
+		res += `## Трёхуровневые указатели\n`;
+		serviceBlocks += 1; // сам блок 'triple level'
 
 		const triplyCapacity = pointersPerBlock ** 3;
 		let usedTriply = Math.min(leftover, triplyCapacity);
@@ -142,7 +141,7 @@
 		let partialForDoubly = usedTriply % (pointersPerBlock ** 2);
 
 		// Число «полных» doubly-блоков
-		serviceBlocks += fullDoublyBlocks; // это сами doubly-блоки
+		serviceBlocks += fullDoublyBlocks; //служебные double level блоки
 
 		// Для каждого «полного» doubly-блока (который вмещает pointersPerBlock^2 блоков данных)
 		// мы добавляем ещё blocks первого уровня (singly).
