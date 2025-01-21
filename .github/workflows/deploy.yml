@@ -25,17 +25,17 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd /home/ubuntu/RubezhOS
 
             # Pull the latest code
-            if [ ! -d ".git" ]; then
+            if [ ! -d "/home/ubuntu/RubezhOS.git" ]; then
               echo "Repository not found. Cloning..."
-              git clone https://glebmavi:${{ secrets.GH_ACCESS_TOKEN }}@github.com/glebmavi/RubezhOS.git
+              git clone https://glebmavi:${{ secrets.GH_ACCESS_TOKEN }}@github.com/glebmavi/RubezhOS.git /home/ubuntu/RubezhOS
             else
               echo "Repository found. Pulling latest changes..."
-              git pull https://glebmavi:${{ secrets.GH_ACCESS_TOKEN }}@github.com/glebmavi/RubezhOS.git
+              git pull https://glebmavi:${{ secrets.GH_ACCESS_TOKEN }}@github.com/glebmavi/RubezhOS.git /home/ubuntu/RubezhOS
             fi
 
+            cd /home/ubuntu/RubezhOS
             # Build and run the Docker container
             docker-compose down
             docker-compose up --build -d
