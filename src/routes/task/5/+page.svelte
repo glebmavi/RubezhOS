@@ -16,8 +16,13 @@
 	$: result = task(taskData);
 	$: markdownHTML = marked(result);
 
-	function handleInputChange(name, value) {
-		task5Store.update(current => ({ ...current, [name]: value }));
+	function task(data: TaskData) {
+		let res = ' ';
+		return result;
+	}
+
+	function handleInputChange(label: string, value: string) {
+		task5Store.update(current => ({ ...current, [label]: value }));
 	}
 </script>
 
