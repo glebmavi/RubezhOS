@@ -28,19 +28,19 @@
 		if (!verify(data)) {
 			return 'Invalid input, all values should be numerical';
 		}
-
-		let res = '';
-		res += `### Размер диска в байтах:\n`;
 		const disk_size = Number(data.C) * 1024**3;
-		res += `\`disk_size\` = ${data.C} * 1024^3 = ${disk_size}\n`;
-		
-		res += '### Количество stripe units на 1 диске:\n';
 		const stripes = disk_size / (Number(data.D) * Number(data.E));
-		res += `\`stripes\` = \`disk_size\` / ( ${data.D} * ${data.E} ) = ${stripes}\n`;
-
-		res += '### Количество блоков на 1 диске:\n';
 		const block_count = stripes * Number(data.E);
-		res += `block_count = stripes * ${data.E} = ${block_count}\n`;
+
+		let res = `
+### Размер диска в байтах:
+\`disk_size\` = ${data.C} * 1024^3 = ${disk_size}
+
+### Количество stripe units на 1 диске:
+\`stripes\` = \`disk_size\` / ( ${data.D} * ${data.E} ) = ${stripes}
+
+### Количество блоков на 1 диске:
+\`block_count\` = stripes * ${data.E} = ${block_count}\n`;
 
 		const RaidLevel = Number(data.A);
 		switch (RaidLevel) {
