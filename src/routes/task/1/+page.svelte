@@ -134,11 +134,11 @@
 	function raid6(data: TaskData, block_count: number, stripes: number) {
 		let res = `### RAID 6:\n Используется «двойной паритет» позволяя переносить выход из строя сразу двух дисков.
 		Но при отказе одного диска массив может быть восстановлен, читая данные со всех остальных B-1 «живых»\n`;
-		res += `### "Живых" дисков осталось N - 1: ${Number(data.B) - 1}\n`;
+		res += `### "Живых" дисков осталось N - 2: ${Number(data.B) - 2}\n`;
 
 		res += '### Время чтения: (Если последовательно)\n';
-		const read_time_seq = block_count * Number(data.F) * (Number(data.B) - 1);
-		res += `read_time_seq = block_count * ${data.F} * ${(Number(data.B) - 1)} = ${read_time_seq} мкс\n`;
+		const read_time_seq = block_count * Number(data.F) * (Number(data.B) - 2);
+		res += `read_time_seq = block_count * ${data.F} * ${(Number(data.B) - 2)} = ${read_time_seq} мкс\n`;
 
 		res += '### Время чтения: (Если параллельно)\n';
 		const read_time_par = stripes * Number(data.E) * Number(data.F);
