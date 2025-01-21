@@ -48,7 +48,7 @@
 
 		const after_register_commands = Number(data.E);
 		const after_cache_commands = Number(data.F) + Number(data.G);
-		const after_local_memory_commands = Number(data.G) + Number(data.H);
+		const after_local_memory_commands = Number(data.H);
 		const after_outer_memory_commands = 0;
 
 		const after_work_time =

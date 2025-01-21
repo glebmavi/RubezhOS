@@ -11,6 +11,22 @@ export type TaskData1 = {
     H: number;
 };
 
+export type TaskData2 = {
+    A: number;
+    B: number;
+    C: number;
+    D: number;
+};
+
+export type TaskData3 = {
+    A: number;
+    B: number;
+    C: number;
+    D: number;
+    E: number;
+    F: number;
+}
+
 export type TaskData4 = {
     A: string;
     B: number;
@@ -39,12 +55,7 @@ export const task1Store = persistentWritable<TaskData1>('task1Store',{
     H: 0
 });
 
-export type TaskData2 = {
-    A: number;
-    B: number;
-    C: number;
-    D: number;
-};
+
 
 export const task2Store = persistentWritable<TaskData2>('task2Store',{
 	A: 0,
@@ -54,7 +65,12 @@ export const task2Store = persistentWritable<TaskData2>('task2Store',{
 });
 
 export const task3Store = persistentWritable('task3Store',{
-	// ...
+	A: 0,
+    B: 0,
+    C: 0,
+    D: 0,
+    E: 0,
+    F: 0
 });
 
 export const task4Store = persistentWritable('task4Store',{
