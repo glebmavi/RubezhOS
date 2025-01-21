@@ -41,10 +41,11 @@
 		const xor = pageNumber.split('').reduce((acc, curr) => acc ^ parseInt(curr, 16), 0).toString(16);
 
 		const chain = data.D
-		const binaryChain = parseInt(chain, 16).toString(2);
-		const binaryChainLen = binaryChain.length;
-		console.log('binaryChain', binaryChain);
-		console.log('binaryChainLen', binaryChainLen);
+		let binaryChain = parseInt(chain, 16).toString(2);
+		let binaryChainLen = binaryChain.length;
+
+		binaryChain = "0".repeat(pageSize + offsetSize - binaryChainLen) + binaryChain
+		binaryChainLen = binaryChain.length;
 
 		const frame = parseInt(
 				binaryChain.slice(
@@ -79,8 +80,6 @@
 
 Значит, начнем проверку записей со строчки номер ${parseInt(xor, 16)}
 
-### Циклично повторите:
-
 Введите chain (Input D) из строки ${parseInt(xor, 16)} (${xor}).
 
 Если значение page в строке ${parseInt(xor, 16)} (${xor}) равно ${pageNumber}, то cм. ответ, иначе перейти к другой строке (см. следующую цепочку)
@@ -92,6 +91,8 @@
 **следующая цепочка = ${nextChain}**
 
 Если значение page в строке ${nextChain} равно ${pageNumber}, то введите chain и cм. ответ, иначе введите chain и перейти к другой строке (см. следующую цепочку)
+
+кадр = ${frame}
 
 ## Ответ:
 \`frame\` + \`offset\` = ${frame} + ${offset} = **${answer}**
