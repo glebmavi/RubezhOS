@@ -18,7 +18,7 @@
         </div>
         {/each}
     </div>
-
+    <slot/>
 <style>
     :root {
     --gap-size: 10px;

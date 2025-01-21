@@ -25,6 +25,7 @@ export type TaskData3 = {
     D: number;
     E: number;
     F: number;
+    Question: string;
 }
 
 export type TaskData4 = {
@@ -70,7 +71,8 @@ export const task3Store = persistentWritable('task3Store',{
     C: 0,
     D: 0,
     E: 0,
-    F: 0
+    F: 0,
+    Question: '',
 });
 
 export const task4Store = persistentWritable('task4Store',{

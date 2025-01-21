@@ -16,8 +16,23 @@
 	$: markdownHTML = marked(result);
 
 	function task(data: TaskData) {
-		let res = ' ';
-		return result;
+		let res = '';
+		const sectorBytes = Number(data.A);
+		const trackSectors = Number(data.B);
+		const surfaceTracks = Number(data.C);
+		const surfaces = Number(data.D);
+		const fileRecords = Number(data.E);
+		const recordBytes = Number(data.F);
+
+		const sectorRecords = Math.floor(sectorBytes / recordBytes);
+		res += `### Сколько записей влезет в 1 сектор:\n`;
+		res += `\`sectorBytes\` / \`recordBytes\` = ${sectorBytes} / ${recordBytes} = ${sectorRecords} (округляя в меньшую сторону)\n\n`;
+
+		const fileSectors = Math.ceil(fileRecords / sectorRecords);
+		res += `### Сколько секторов придётся заполнить чтобы влез весь файл:\n`;
+		res += `\`fileRecords\` / \`sectorRecords\` = ${fileRecords} / ${sectorRecords} = ${fileSectors} (округляя в большую сторону)\n\n`;
+
+		return res;
 	}
 
 	function handleInputChange(label: string, value: string) {
@@ -33,8 +48,22 @@
 	values={taskData}
 	onInputChange={handleInputChange}
 	inputType={tasks[taskIdx].inputType}
-/>
-<!-- Output (the calculation) -->
+>
+    <div class="input-row">
+        <label for="select-question">Вопрос</label>
+        <select 
+            id="select-question" 
+            bind:value={taskData.Question} 
+            on:change={(e) => handleInputChange('Вопрос', (e.target as HTMLInputElement).value)}
+        >
+            <option value="" disabled selected>Select an option</option>
+            <option value="Option1">Option 1</option>
+            <option value="Option2">Option 2</option>
+            <option value="Option3">Option 3</option>
+        </select>
+    </div>
+</InputBlock>
+
 <OutputBlock>
 	<div class="markdown">
 		{@html markdownHTML}
