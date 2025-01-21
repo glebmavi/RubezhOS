@@ -41,8 +41,12 @@
 		const xor = pageNumber.split('').reduce((acc, curr) => acc ^ parseInt(curr, 16), 0).toString(16);
 
 		const chain = data.D
-		const binaryChain = parseInt(chain, 16).toString(2);
-		const binaryChainLen = binaryChain.length;
+		let binaryChain = parseInt(chain, 16).toString(2);
+		let binaryChainLen = binaryChain.length;
+
+		binaryChain = "0".repeat(pageSize + offsetSize - binaryChainLen) + binaryChain
+		binaryChainLen = binaryChain.length;
+
 
 		const frame = parseInt(
 				binaryChain.slice(
@@ -86,6 +90,8 @@ xor всех бит номера страницы = ${xor} (${parseInt(xor, 16)}
 в двоичной системе = ${binaryChain}
 
 следующая цепочка = ${nextChain}
+
+кадр = ${frame}
 
 ответ = ${answer}
 		`;
