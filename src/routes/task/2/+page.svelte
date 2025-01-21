@@ -38,7 +38,7 @@
 
 		if (blocksNeeded === 0) {
 			res += `
-Файл размера 0 байт, обычно всё равно есть один служебный блок.
+Файл размера 0 байт, но обычно всё равно есть один служебный блок.
 ## Ответ: 1
 `;
 			return res;
@@ -46,6 +46,7 @@
 
 		res += `### Размер одного указателя в байтах\n`;
 		const pointerSize = Number(data.B) / 8;
+		res += `\`pointerSize\` = ${data.B} / 8 = ${pointerSize} байт\n`;
 
 		// Сколько указателей помещается в одном блоке
 		const pointersPerBlock = Math.floor(Number(data.C) / pointerSize);
