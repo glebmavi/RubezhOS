@@ -7,6 +7,7 @@
 	import img from '$lib/images/photo_1.jpg'
 	import { marked } from 'marked';
 
+	const taskIdx = 0;
 	let taskData: TaskData;
 	task1Store.subscribe((data) => (taskData = data));
 
@@ -190,14 +191,14 @@
 	}
 </script>
 
-<Task title={tasks[0].name}>
+<Task title={tasks[taskIdx].name}>
 	<img src={img} alt="" style="width: 90%;" />
 </Task>
 <InputBlock 
 	labels={['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']}
 	values={taskData}
 	onInputChange={handleInputChange}
-	inputType={tasks[0].inputType}
+	inputType={tasks[taskIdx].inputType}
 />
 <!-- Output (the calculation) -->
 <OutputBlock>

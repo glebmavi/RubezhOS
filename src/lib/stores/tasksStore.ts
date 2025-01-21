@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import persistentWritable from "./persistentWritable";
 
 export type TaskData1 = {
     A: number;
@@ -11,7 +11,7 @@ export type TaskData1 = {
     H: number;
 };
 
-export const task1Store = writable<TaskData1>({
+export const task1Store = persistentWritable<TaskData1>('task1Store',{
     A: 0,
     B: 0,
     C: 0,
@@ -29,21 +29,21 @@ export type TaskData2 = {
     D: number;
 };
 
-export const task2Store = writable<TaskData2>({
+export const task2Store = persistentWritable<TaskData2>('task2Store',{
 	A: 0,
 	B: 0,
     C: 0,
     D: 0
 });
 
-export const task3Store = writable({
+export const task3Store = persistentWritable('task3Store',{
 	// ...
 });
 
-export const task4Store = writable({
+export const task4Store = persistentWritable('task4Store',{
 	// ...
 });
 
-export const task5Store = writable({
+export const task5Store = persistentWritable('task5Store',{
 	// ...
 });
