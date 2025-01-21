@@ -1,7 +1,8 @@
 <script lang="ts">
     export let labels: string[] = [];
-    export let values: { [key: string]: string };
+    export let values: { [key: string]: unknown };
     export let onInputChange: (name: string, value: string) => void;
+    export let inputType: string = 'text';
 </script>
 
 <div class="input-block main-block">
@@ -10,7 +11,7 @@
             <label for="input-{i}">{label}</label>
             <input
                 id="input-{i}"
-                type="text"
+                type={inputType}
                 bind:value={values[label]}
                 on:input={(e) => onInputChange(label, (e.target as HTMLInputElement).value)}
             />

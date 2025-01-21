@@ -1,32 +1,39 @@
 import { writable } from 'svelte/store';
 
 export type TaskData1 = {
-    A: string;
-    B: string;
-    C: string;
-    D: string;
-    E: string;
-    F: string;
-    G: string;
-    H: string;
+    A: number;
+    B: number;
+    C: number;
+    D: number;
+    E: number;
+    F: number;
+    G: number;
+    H: number;
 };
 
-// Example shape of data for Task 1
 export const task1Store = writable<TaskData1>({
-    A: '',
-    B: '',
-    C: '',
-    D: '',
-    E: '',
-    F: '',
-    G: '',
-    H: ''
+    A: 0,
+    B: 0,
+    C: 0,
+    D: 0,
+    E: 0,
+    F: 0,
+    G: 0,
+    H: 0
 });
 
-// Similar store for each task
-export const task2Store = writable({
-	input1: '',
-	input2: ''
+export type TaskData2 = {
+    A: number;
+    B: number;
+    C: number;
+    D: number;
+};
+
+export const task2Store = writable<TaskData2>({
+	A: 0,
+	B: 0,
+    C: 0,
+    D: 0
 });
 
 export const task3Store = writable({

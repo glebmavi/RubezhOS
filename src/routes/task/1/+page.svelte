@@ -41,18 +41,18 @@
 		const block_count = stripes * Number(data.E);
 		res += `block_count = stripes * ${data.E} = ${block_count}\n`;
 
-		const RaidLevel = data.A;
+		const RaidLevel = Number(data.A);
 		switch (RaidLevel) {
-			case "0":
+			case 0:
 				return '### RAID 0: не восстанавливается';
-			case "1":
+			case 1:
 				return res += raid1(data, block_count, stripes);
-			case "2":
-			case "3":
-			case "4":
-			case "5":
+			case 2:
+			case 3:
+			case 4:
+			case 5:
 				return res += raid5(data, block_count, stripes);
-			case "6":
+			case 6:
 				return res += raid6(data, block_count, stripes);
 			default:
 				return "## Invalid Raid Level";
@@ -197,6 +197,7 @@
 	labels={['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']}
 	values={taskData}
 	onInputChange={handleInputChange}
+	inputType={tasks[0].inputType}
 />
 <!-- Output (the calculation) -->
 <OutputBlock>
