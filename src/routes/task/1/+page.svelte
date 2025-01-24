@@ -3,8 +3,8 @@
 	import InputBlock from '$lib/components/InputBlock.svelte';
 	import OutputBlock from '$lib/components/OutputBlock.svelte';
 	import { tasks } from '$lib/tasksInfo';
-	import { task1Store, type TaskData1 as TaskData} from '$lib/stores/tasksStore';
-	import img from '$lib/images/photo_1.jpg'
+	import { task1Store, type TaskData1 as TaskData } from '$lib/stores/tasksStore';
+	import img from '$lib/images/photo_1.jpg';
 	import { marked } from 'marked';
 
 	const taskIdx = 0;
@@ -28,7 +28,8 @@
 		if (!verify(data)) {
 			return 'Invalid input, all values should be numerical';
 		}
-		const disk_size = Number(data.C) * 1024**3;
+
+		const disk_size = Number(data.C) * 1024 ** 3;
 		const stripes = disk_size / (Number(data.D) * Number(data.E));
 		const block_count = stripes * Number(data.E);
 
@@ -40,7 +41,7 @@
 \`stripes\` = \`disk_size\` / ( ${data.D} * ${data.E} ) = ${stripes}
 
 ### Количество блоков на 1 диске:
-\`block_count\` = stripes * ${data.E} = ${block_count}\n`;
+\`block_count\` = \`stripes\` * ${data.E} = ${block_count}\n`;
 
 		const RaidLevel = Number(data.A);
 		switch (RaidLevel) {
@@ -72,12 +73,12 @@
 "Живых" дисков осталось N - 1: ${Number(data.B) - 1}
 
 ### Время чтения:
-Последовательно: ${readTimeSeq} мкс
+Последовательно: \`readTimeSeq\` = ${blockCount} * ${data.F} * (${data.B} - 1) = ${readTimeSeq} мкс
 
-Параллельно: ${readTimePar} мкс
+Параллельно: \`readTimePar\` = ${stripes} * ${data.E} * ${data.F} = ${readTimePar} мкс
 
 ### Время записи:
-${writeTime} мкс
+\`writeTime\` = ${blockCount} * ${data.G} = ${writeTime} мкс
 
 ## Итог:
 **Последовательно: ${totalSeq} мкс (${(totalSeq / 10 ** 6 / 60).toFixed(2)} мин)** (более вероятный ответ)
@@ -101,15 +102,15 @@ ${writeTime} мкс
 "Живых" дисков осталось N - 1: ${Number(data.B) - 1}
 
 ### Время чтения:
-Последовательно: ${readTimeSeq} мкс
+Последовательно: \`readTimeSeq\` = ${blockCount} * ${data.F} * (${data.B} - 1) = ${readTimeSeq} мкс
 
-Параллельно: ${readTimePar} мкс
+Параллельно: \`readTimePar\` = ${stripes} * ${data.E} * ${data.F} = ${readTimePar} мкс
 
 ### Время расчёта:
-${calcTime} мкс
+\`calcTime\` = ${stripes} * ${data.H} = ${calcTime} мкс
 
 ### Время записи:
-${writeTime} мкс
+\`writeTime\` = ${blockCount} * ${data.G} = ${writeTime} мкс
 
 ## Итог:
 **Последовательно: ${totalSeq} мкс (${(totalSeq / 10 ** 6 / 60).toFixed(2)} мин)** (более вероятный ответ)
@@ -134,13 +135,13 @@ ${writeTime} мкс
 
 ### Время чтения:
 
-Последовательно: ${readTimeSeq} мкс
+Последовательно: \`readTimeSeq\` = ${blockCount} * ${data.F} * (${data.B} - 2) = ${readTimeSeq} мкс
 
-Параллельно: ${readTimePar} мкс
+Параллельно: \`readTimePar\` = ${stripes} * ${data.E} * ${data.F} = ${readTimePar} мкс
 
 ### Время расчёта:
 Если трактовать буквально, что H = ${data.H} мкс это «время вычисления всего нужного кода на один stripe» именно для нашего уровня,
-тогда \`calc_time\` получится:
+тогда \`calcTime\` получится:
 
 Одно вычисление: ${calcTime} мкс
 
@@ -149,7 +150,7 @@ ${writeTime} мкс
 Двойное вычисление: ${2 * calcTime} мкс
 
 ### Время записи:
-${writeTime} мкс
+\`writeTime\` = ${blockCount} * ${data.G} = ${writeTime} мкс
 
 ## Итог:
 **Последовательно (одно вычисление): ${totalSeqSingle} мкс (${(totalSeqSingle / 10 ** 6 / 60).toFixed(2)} мин)** (более вероятный ответ)
@@ -176,7 +177,6 @@ ${writeTime} мкс
 	onInputChange={handleInputChange}
 	inputType={tasks[taskIdx].inputType}
 />
-<!-- Output (the calculation) -->
 <OutputBlock>
 	<div class="markdown">
 		{@html markdownHTML}
