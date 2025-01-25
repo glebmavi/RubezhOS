@@ -7,7 +7,6 @@
 
 <style>
 	.output-block {
-		padding: 0.5rem;
 		/* border: 1px solid #ccc;
 		background-color: #f5f5f5; */
         line-height: 1.2;

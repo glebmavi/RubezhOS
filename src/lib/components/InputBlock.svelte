@@ -26,7 +26,6 @@
     --label-width: 15px;
     }
     :global(.input-block) {
-    margin: 1rem 0;
     display: flex;
     flex-wrap: wrap;
     gap: var(--gap-size);

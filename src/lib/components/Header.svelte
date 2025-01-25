@@ -19,6 +19,9 @@
         width: 100%;
         background-color: #101f27;
         padding: 16px 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
     }
     .buttons {
         display: flex;
@@ -52,9 +55,6 @@
         width: 36px;
         height: 36px;
     }
-    img {
-        width: 90%;
-    }
 </style>
 
 <header>
@@ -75,5 +75,5 @@
         </button>
     </div>
     
-    <img src={img} alt="Logo" />
+    <img src={img} alt="Logo" width="330"/>
 </header>

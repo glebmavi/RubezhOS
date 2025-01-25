@@ -26,10 +26,9 @@
     :global(.layout) {
         display: flex;
         flex-direction: column;
-        align-items: center; /* horizontally center content */
-        width: 100vw;        /* stretch to window width */
-        min-height: 100vh;   /* ensure full height */
+        align-items: center;
+        width: 100vw;
+        min-height: 100vh;
         box-sizing: border-box;
-        padding: 0.1rem 1rem;
     }
 </style>

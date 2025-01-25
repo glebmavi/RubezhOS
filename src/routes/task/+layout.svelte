@@ -12,5 +12,7 @@
         width: 100%;
 		max-width: 600px;
 		display: flex;
+        padding: 0.1rem 1rem;
+        box-sizing: border-box;
     }
 </style>
