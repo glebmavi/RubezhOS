@@ -104,24 +104,18 @@
 	}
 </script>
 
-<Task title={tasks[taskIdx].name}>
-	<img src={img} alt="" style="width: 90%;" />
-</Task>
 <InputBlock 
 	labels={['A', 'B', 'C', 'D']}
 	values={taskData}
 	onInputChange={handleInputChange}
 	inputType={tasks[taskIdx].inputType}
 />
-<!-- Output (the calculation) -->
 <OutputBlock>
 	<div class="markdown">
 		{@html markdownHTML}
 	</div>
 </OutputBlock>
+<Task title={tasks[taskIdx].name}>
+	<img src={img} alt="" style="width: 90%;" />
+</Task>
 
-<style>
-	.markdown {
-		font-size: 0.9rem;
-	}
-</style>

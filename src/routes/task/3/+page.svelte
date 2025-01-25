@@ -99,9 +99,6 @@
 	}
 </script>
 
-<Task title={tasks[taskIdx].name}>
-	<img src={img} alt="" style="width: 90%;" />
-</Task>
 <InputBlock 
 	labels={['A', 'B', 'C', 'D', 'E', 'F']}
 	values={taskData}
@@ -141,11 +138,11 @@
 		{@html markdownHTML}
 	</div>
 </OutputBlock>
+<Task title={tasks[taskIdx].name}>
+	<img src={img} alt="" style="width: 90%;" />
+</Task>
 
 <style>
-	.markdown {
-		font-size: 0.9rem;
-	}
 	select {
 		width: 100%;
 	}

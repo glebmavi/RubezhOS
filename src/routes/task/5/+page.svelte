@@ -111,24 +111,17 @@ ${diff} нс
 	}
 </script>
 
-<Task title={tasks[taskIdx].name}>
-	<img src={img} alt="" style="width: 90%;" />
-</Task>
 <InputBlock
 	labels={['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']}
 	values={taskData}
 	onInputChange={handleInputChange}
 	inputType={tasks[taskIdx].inputType}
 />
-<!-- Output (the calculation) -->
 <OutputBlock>
 	<div class="markdown">
 		{@html markdownHTML}
 	</div>
 </OutputBlock>
-
-<style>
-	.markdown {
-		font-size: 0.9rem;
-	}
-</style>
+<Task title={tasks[taskIdx].name}>
+	<img src={img} alt="" style="width: 90%;" />
+</Task>

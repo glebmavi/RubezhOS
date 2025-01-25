@@ -19,17 +19,16 @@
         margin: 0;
         padding: 0;
         min-height: 100%;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         line-height: 1.2;
     }
 
     :global(.layout) {
         display: flex;
         flex-direction: column;
-        align-items: center; /* horizontally center content */
-        width: 100vw;        /* stretch to window width */
-        min-height: 100vh;   /* ensure full height */
+        align-items: center;
+        width: 100vw;
+        min-height: 100vh;
         box-sizing: border-box;
-        padding: 0.1rem 1rem;
     }
 </style>
