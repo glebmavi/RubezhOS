@@ -15,4 +15,10 @@
         padding: 0.1rem 1rem;
         box-sizing: border-box;
     }
+    :global(.markdown) {
+		font-size: 0.9rem;
+	}
+    :global(.markdown h2, .markdown h3) {
+        font-weight: normal;
+	}
 </style>

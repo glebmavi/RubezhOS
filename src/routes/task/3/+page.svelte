@@ -143,9 +143,6 @@
 </Task>
 
 <style>
-	.markdown {
-		font-size: 0.9rem;
-	}
 	select {
 		width: 100%;
 	}
