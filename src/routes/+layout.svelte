@@ -19,7 +19,7 @@
         margin: 0;
         padding: 0;
         min-height: 100%;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         line-height: 1.2;
     }
 

@@ -38,7 +38,6 @@
     width: calc(33.33% - var(--gap-size)); /* Adjust width to fit 3 in a row with gap */
     }
     label {
-    font-weight: bold;
     width: var(--label-width);
     display: flex;
     align-items: center;
@@ -48,5 +47,6 @@
     font-size: 1rem;
     flex: 1;
     width: calc(100% - var(--label-width));
+    border: none;
     }
 </style>
