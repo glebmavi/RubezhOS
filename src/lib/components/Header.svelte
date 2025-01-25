@@ -55,6 +55,9 @@
         width: 36px;
         height: 36px;
     }
+    svg {
+        color: white;
+    }
 </style>
 
 <header>
