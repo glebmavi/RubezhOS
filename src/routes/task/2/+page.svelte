@@ -173,16 +173,15 @@
 
 		// Иначе остался «частично занятый» блок второго уровня
 		res += `Осталось распределить = ${leftover} blocks < ${pointersPerBlock}^2 = ${pointersPerBlock ** 2}\n`;
-		const singlyNeeded = Math.ceil(leftover / pointersPerBlock);
-		res += `=> заводим ещё указатели: ${leftover} / ${pointersPerBlock} = ${leftover / pointersPerBlock} = ${singlyNeeded}\n\n`;
+		const doublyNeeded = Math.ceil(leftover / pointersPerBlock);
+		res += `=> заводим ещё указатели: ${leftover} / ${pointersPerBlock} = ${leftover / pointersPerBlock} = ${doublyNeeded}\n\n`;
 		
-		const usedInPartialDoubly = singlyNeeded * pointersPerBlock;
+		const usedInPartialDoubly = doublyNeeded * pointersPerBlock;
 		usedFileBlocks += usedInPartialDoubly;
 		leftover -= usedInPartialDoubly;
 
-		// Добавляем служебные блоки первого уровня
-		serviceBlocks += singlyNeeded;
-		res += `Нужно ${singlyNeeded} блок(ов) первого уровня => \`serviceBlocks\` = ${serviceBlocks}\n\n`;
+		serviceBlocks += doublyNeeded + 1; // Один второго уровня
+		res += `Нужно ${doublyNeeded} блок(ов) третьего уровня + 1 второго на них => \`serviceBlocks\` = ${serviceBlocks}\n\n`;
 		res += `Распределено ещё ${usedInPartialDoubly + leftover} блок(ов) данных\n\n`;
 		res += `Осталось распределить = ${leftover} blocks\n`;
 		if (leftover < 0) res += `Всё распределено.\n\n`;
